@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovoAprendiz :: Monitor</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #0a0a0f;
+    color: #00ff41;
+    font-family: 'VT323', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 65, 0.03) 0px,
+        rgba(0, 255, 65, 0.03) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 700px;
+}
+
+.header {
+    text-align: center;
+    font-size: 14px;
+    color: #ff0040;
+    margin-bottom: 30px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.header::before { content: '[ '; color: #00ff41; }
+.header::after { content: ' ]'; color: #00ff41; }
+
+.line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #00ff41, transparent);
+    margin: 15px 0;
+    opacity: 0.5;
+}
+
+.total-box {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.total-label {
+    color: #ff0040;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.total-value {
+    color: #00ff41;
+    font-size: 56px;
+    text-shadow: 0 0 15px rgba(0, 255, 65, 0.6), 0 0 30px rgba(0, 255, 65, 0.3);
+    margin-top: 5px;
+}
+
+.table-header {
+    display: flex;
+    color: #ff0040;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 8px 15px;
+    border-bottom: 1px solid rgba(255, 0, 64, 0.3);
+}
+
+.table-header .col-game { flex: 1; }
+.table-header .col-count { width: 100px; text-align: right; }
+
+.game-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    font-size: 20px;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.08);
+    transition: background 0.2s;
+}
+
+.game-row:hover {
+    background: rgba(0, 255, 65, 0.05);
+}
+
+.game-row .col-game {
+    flex: 1;
+    color: #00ccff;
+    text-shadow: 0 0 5px rgba(0, 204, 255, 0.3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.game-row .col-count {
+    width: 100px;
+    text-align: right;
+    color: #ffaa00;
+    text-shadow: 0 0 5px rgba(255, 170, 0, 0.3);
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 12px;
+    color: #333;
+    letter-spacing: 2px;
+}
+
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 18px;
+    background: #00ff41;
+    margin-left: 6px;
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+.loading { color: #ffaa00; text-align: center; font-size: 20px; padding: 40px; }
+.error { color: #ff0040; text-align: center; font-size: 18px; padding: 40px; }
+
+.empty {
+    text-align: center;
+    color: #444;
+    font-size: 18px;
+    padding: 40px;
+    font-style: italic;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">NovoAprendiz Monitor v2.0</div>
+    <div class="line"></div>
+
+    <div class="total-box">
+        <div class="total-label">Execucoes Totais</div>
+        <div class="total-value" id="total">---</div>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="table-header">
+        <div class="col-game">Jogo</div>
+        <div class="col-count">Execucoes</div>
+    </div>
+    <div id="games-list">
+        <div class="loading">CARREGANDO DADOS...</div>
+    </div>
+
+    <div class="line"></div>
+    <div class="footer">SYSTEM ONLINE // CONNECTION SECURE<span class="cursor"></span></div>
+</div>
+
+<script>
+async function loadStats() {
+    const listEl = document.getElementById('games-list');
+    try {
+        const res = await fetch('/api/stats');
+        const data = await res.json();
+
+        if (data.error) {
+            listEl.innerHTML = '<div class="error">ERRO: ' + data.error + '</div>';
+            return;
+        }
+
+        document.getElementById('total').textContent = (data.total || 0).toLocaleString('pt-BR');
+
+        const games = data.games || {};
+        const entries = Object.entries(games).sort((a, b) => b[1] - a[1]);
+
+        if (entries.length === 0) {
+            listEl.innerHTML = '<div class="empty">NENHUM DADO REGISTRADO</div>';
+            return;
+        }
+
+        listEl.innerHTML = entries.map(([name, count]) => {
+            const safeName = name.substring(0, 50);
+            const safeCount = count.toLocaleString('pt-BR').substring(0, 15);
+            return '<div class="game-row"><div class="col-game">' + safeName + '</div><div class="col-count">' + safeCount + '</div></div>';
+        }).join('');
+    } catch (e) {
+        listEl.innerHTML = '<div class="error">FALHA DE CONEXAO</div>';
+    }
+}
+
+loadStats();
+</script>
+</body>
+</html>
