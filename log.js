@@ -7,12 +7,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'method not allowed' });
     }
 
-    const { placeId, gameName } = req.body || {};
-
-    if (!placeId || !/^\d+$/.test(placeId) || placeId.length > 15) {
-        return res.status(400).json({ error: 'invalid placeId' });
-    }
-
+    const { gameName } = req.body || {};
     const gName = (gameName || 'Desconhecido').toString().substring(0, 50);
 
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -38,7 +33,7 @@ export default async function handler(req, res) {
         }
 
         stats.total = (stats.total || 26000) + 1;
-        stats.games[placeId] = (stats.games[placeId] || 0) + 1;
+        stats.games[gName] = (stats.games[gName] || 0) + 1;
 
         const newContent = Buffer.from(JSON.stringify(stats, null, 2)).toString('base64');
 
@@ -49,7 +44,7 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                message: `log: ${placeId} (${gName})`,
+                message: `log: ${gName}`,
                 content: newContent,
                 sha: sha
             })
