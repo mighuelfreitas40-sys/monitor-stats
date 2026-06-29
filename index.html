@@ -7,11 +7,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     background: #0a0a0f;
@@ -21,18 +17,15 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
+    padding: 40px 20px;
+    overflow-x: hidden;
 }
 
 body::before {
     content: '';
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: repeating-linear-gradient(
         0deg,
         rgba(0, 255, 65, 0.03) 0px,
@@ -44,34 +37,15 @@ body::before {
     z-index: 1;
 }
 
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 15, 0.8) 100%);
-    pointer-events: none;
-    z-index: 2;
-}
-
 .container {
     position: relative;
     z-index: 10;
-    text-align: center;
-    padding: 40px;
-}
-
-.blink {
-    animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-    50% { opacity: 0; }
+    width: 100%;
+    max-width: 700px;
 }
 
 .header {
+    text-align: center;
     font-size: 14px;
     color: #ff0040;
     margin-bottom: 30px;
@@ -79,63 +53,80 @@ body::after {
     text-transform: uppercase;
 }
 
-.header::before {
-    content: '[ ';
-    color: #00ff41;
-}
-
-.header::after {
-    content: ' ]';
-    color: #00ff41;
-}
+.header::before { content: '[ '; color: #00ff41; }
+.header::after { content: ' ]'; color: #00ff41; }
 
 .line {
     height: 1px;
     background: linear-gradient(90deg, transparent, #00ff41, transparent);
-    margin: 20px auto;
-    width: 400px;
+    margin: 15px 0;
     opacity: 0.5;
 }
 
-.stat {
-    margin: 25px 0;
-    font-size: 28px;
-    letter-spacing: 2px;
+.total-box {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-.stat-label {
+.total-label {
     color: #ff0040;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 3px;
-    margin-bottom: 8px;
 }
 
-.stat-value {
+.total-value {
     color: #00ff41;
-    font-size: 48px;
-    text-shadow: 0 0 10px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 255, 65, 0.3);
+    font-size: 56px;
+    text-shadow: 0 0 15px rgba(0, 255, 65, 0.6), 0 0 30px rgba(0, 255, 65, 0.3);
+    margin-top: 5px;
 }
 
-.stat-value.warn {
-    color: #ffaa00;
-    text-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+.table-header {
+    display: flex;
+    color: #ff0040;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 8px 15px;
+    border-bottom: 1px solid rgba(255, 0, 64, 0.3);
 }
 
-.game-name {
+.table-header .col-game { flex: 1; }
+.table-header .col-count { width: 100px; text-align: right; }
+
+.game-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    font-size: 20px;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.08);
+    transition: background 0.2s;
+}
+
+.game-row:hover {
+    background: rgba(0, 255, 65, 0.05);
+}
+
+.game-row .col-game {
+    flex: 1;
     color: #00ccff;
-    font-size: 32px;
-    text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
-    margin-top: 10px;
-    max-width: 500px;
+    text-shadow: 0 0 5px rgba(0, 204, 255, 0.3);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    display: inline-block;
+}
+
+.game-row .col-count {
+    width: 100px;
+    text-align: right;
+    color: #ffaa00;
+    text-shadow: 0 0 5px rgba(255, 170, 0, 0.3);
 }
 
 .footer {
-    margin-top: 40px;
+    text-align: center;
+    margin-top: 30px;
     font-size: 12px;
     color: #333;
     letter-spacing: 2px;
@@ -144,21 +135,24 @@ body::after {
 .cursor {
     display: inline-block;
     width: 10px;
-    height: 20px;
+    height: 18px;
     background: #00ff41;
-    margin-left: 4px;
+    margin-left: 6px;
     animation: blink 1s step-end infinite;
     vertical-align: middle;
 }
 
-.loading {
-    color: #ffaa00;
-    font-size: 18px;
-}
+@keyframes blink { 50% { opacity: 0; } }
 
-.error {
-    color: #ff0040;
+.loading { color: #ffaa00; text-align: center; font-size: 20px; padding: 40px; }
+.error { color: #ff0040; text-align: center; font-size: 18px; padding: 40px; }
+
+.empty {
+    text-align: center;
+    color: #444;
     font-size: 18px;
+    padding: 40px;
+    font-style: italic;
 }
 </style>
 </head>
@@ -167,53 +161,54 @@ body::after {
     <div class="header">NovoAprendiz Monitor v2.0</div>
     <div class="line"></div>
 
-    <div class="stat">
-        <div class="stat-label">Execucoes Totais</div>
-        <div class="stat-value" id="total">---</div>
+    <div class="total-box">
+        <div class="total-label">Execucoes Totais</div>
+        <div class="total-value" id="total">---</div>
     </div>
 
     <div class="line"></div>
 
-    <div class="stat">
-        <div class="stat-label">Execucoes Neste Jogo</div>
-        <div class="stat-value warn" id="game-count">---</div>
+    <div class="table-header">
+        <div class="col-game">Jogo</div>
+        <div class="col-count">Execucoes</div>
+    </div>
+    <div id="games-list">
+        <div class="loading">CARREGANDO DADOS...</div>
     </div>
 
     <div class="line"></div>
-
-    <div class="stat">
-        <div class="stat-label">Jogo Atual</div>
-        <div class="game-name" id="game-name">---</div>
-        <span class="cursor"></span>
-    </div>
-
-    <div class="line"></div>
-    <div class="footer">SYSTEM ONLINE // CONNECTION SECURE</div>
+    <div class="footer">SYSTEM ONLINE // CONNECTION SECURE<span class="cursor"></span></div>
 </div>
 
 <script>
-const urlParams = new URLSearchParams(window.location.search);
-const placeId = urlParams.get('p');
-
 async function loadStats() {
-    if (!placeId || !/^\d+$/.test(placeId) || placeId.length > 15) {
-        document.getElementById('total').textContent = 'ERR';
-        document.getElementById('game-count').textContent = 'ERR';
-        document.getElementById('game-name').textContent = 'PARAMETRO INVALIDO';
-        return;
-    }
-
+    const listEl = document.getElementById('games-list');
     try {
-        const res = await fetch('/api/stats?placeId=' + placeId);
+        const res = await fetch('/api/stats');
         const data = await res.json();
 
-        document.getElementById('total').textContent = data.total !== undefined ? data.total.toLocaleString('pt-BR') : '---';
-        document.getElementById('game-count').textContent = data.gameCount !== undefined ? data.gameCount.toLocaleString('pt-BR') : '---';
-        document.getElementById('game-name').textContent = data.gameName ? data.gameName.substring(0, 50) : 'DESCONHECIDO';
+        if (data.error) {
+            listEl.innerHTML = '<div class="error">ERRO: ' + data.error + '</div>';
+            return;
+        }
+
+        document.getElementById('total').textContent = (data.total || 0).toLocaleString('pt-BR');
+
+        const games = data.games || {};
+        const entries = Object.entries(games).sort((a, b) => b[1] - a[1]);
+
+        if (entries.length === 0) {
+            listEl.innerHTML = '<div class="empty">NENHUM DADO REGISTRADO</div>';
+            return;
+        }
+
+        listEl.innerHTML = entries.map(([name, count]) => {
+            const safeName = name.substring(0, 50);
+            const safeCount = count.toLocaleString('pt-BR').substring(0, 15);
+            return '<div class="game-row"><div class="col-game">' + safeName + '</div><div class="col-count">' + safeCount + '</div></div>';
+        }).join('');
     } catch (e) {
-        document.getElementById('total').textContent = 'ERR';
-        document.getElementById('game-count').textContent = 'ERR';
-        document.getElementById('game-name').textContent = 'FALHA DE CONEXAO';
+        listEl.innerHTML = '<div class="error">FALHA DE CONEXAO</div>';
     }
 }
 
