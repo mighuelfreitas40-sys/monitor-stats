@@ -1,0 +1,40 @@
+SUPABASE + GITHUB PAGES - PASSO A PASSO COMPLETO
+
+1. CRIAR CONTA SUPABASE
+   - Vai em https://supabase.com
+   - Cria conta (pode logar com GitHub)
+   - Cria novo projeto (nome: novoaprendiz-monitor)
+   - Espera criar (leva 1-2 min)
+
+2. CRIAR TABELA
+   - No sidebar, clica em "Table Editor"
+   - "New table"
+   - Nome: executions
+   - Colunas:
+     * id: int8 (default, primary key, auto-increment)
+     * game_name: text
+     * count: int8 (default: 0)
+   - Save
+
+3. CRIAR TABELA DE TOTAL
+   - "New table"
+   - Nome: totals
+   - Colunas:
+     * id: int8 (primary key)
+     * value: int8 (default: 26000)
+   - Save
+   - Clica na tabela → "Insert row"
+   - id: 1, value: 26000
+
+4. HABILITAR API REST
+   - Sidebar → "API"
+   - Copia a URL (ex: https://abc123.supabase.co)
+   - Copia a anon key (service role key)
+
+5. CRIAR EDGE FUNCTION (backend)
+   - Sidebar → "Edge Functions"
+   - "New function"
+   - Nome: log-execution
+   - Cola o codigo do arquivo supabase-function.js
+   - Deploy
+
